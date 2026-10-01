@@ -31,8 +31,6 @@ bench/
   paper_numbers.py     results/paper/: proba_numbers.tex (+ tables/, figures/) for the manuscript
   check_env.py         preflight check of packages and tools
 tests/test_protocol.py correctness and soundness sanity tests (pytest, 15 tests)
-results_linux_x86_vm/  v3.4 run on a single-vCPU Intel Xeon VM (cross-platform reference)
-archive/results_v3.2_M4/  superseded v3.2 run (M4), kept for the response letter
 ```
 
 ## Running
