@@ -1,0 +1,12 @@
+py_arkworks_bls12381==0.5.0
+pycryptodome==3.23.0
+cryptography>=42
+web3==8.0.0
+requests
+scipy
+matplotlib
+numpy
+pytest
+# libsecp256k1 bindings; no CPython 3.14 wheels exist for 21.0.0 (setup.sh then tries a
+# source build and otherwise the pure-Python/cryptography fallback in proba/ is used)
+coincurve==21.0.0; python_version < "3.14"
