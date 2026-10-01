@@ -5,16 +5,6 @@ Reference implementation, smart contracts and experiments for Section 7 of
 Everything follows the normative Algorithms 5–8 and the BLS12-381 instantiation
 of Section 3.3 of the v3.4 manuscript.
 
-## Changes with respect to v3.2
-
-| Change | Where | Effect on measurements |
-|---|---|---|
-| Credential showing is the re-randomised credential `(h', s')`; `kappa`, `nu`, `pi_show` and `d_v` removed (they hid nothing and did not bind the ballot) | `tiac.py`, `ballot.py`, contract C3 | `|B_v|` = 512 + 384 n_c; C3 ≈ 134k gas instead of ≈ 221k |
-| C5 rate limit: `seq <= S_max`, re-vote at least `Delta_min` after the previous accepted ballot (`t_last` packed in the same slot) | `ballot.py`, contract C5 | negligible gas; two new negative tests |
-| Every issuer authenticates the identity itself (challenge-response), keeps a one-share-per-identity record and reports shares; a pending registration can be released only if no share was returned | `registration.py` | registration time includes `T_IdResp` / `T_IssChk` |
-| Auditor recovers every effective object from transaction calldata and from IPFS and checks they are identical; checks `|S| <= #receipts` | `bench_e2e.py` | new audit timing |
-| `h1`, `g_E` documented as hash-to-curve (tested), including a test that shows the forgery if `log(h1)` were known | `crypto.py`, tests | – |
-| Every number in Section 7 is generated (`bench/paper_numbers.py`) | `results/paper/` | – |
 
 ## Layout
 
@@ -67,21 +57,6 @@ python bench/bench_contract.py
 
 `PROBA_RESULTS=/some/dir` redirects the output directory.
 
-### macOS and Python 3.14
-
-`coincurve` 21.0.0 (libsecp256k1 bindings) publishes wheels only up to CPython 3.13, and its
-source build fails on 3.14. `setup.sh` therefore prefers `python3.13` when present. On 3.14 the
-suite still runs: wallet signatures then use `proba/secp256k1_fallback.py` (OpenSSL signing plus a
-pure-Python `ecrecover`), which is bit-exact with the contract (tested) but slower
-(T_Sign ≈ 4 ms, T_SigVr ≈ 2.5 ms instead of ≈ 0.04–0.05 ms). The active backend is recorded as
-`wallet_backend` in every `results/*.json`. **For numbers comparable with the paper, use 3.13:**
-
-```bash
-brew install python@3.13
-rm -rf .venv && PYTHON=python3.13 ./setup.sh
-```
-
-Gas values are deterministic and independent of the machine and of the wallet backend.
 
 ## Design notes
 
@@ -101,23 +76,3 @@ anvil is a single-node development chain with instant sealing: EVM execution and
 IPFS runs offline on localhost (no WAN transfer or multi-provider replication). Civil-identity
 authentication, the anonymous channel of Assumption 3.1 and browser clients are out of scope.
 All roles run sequentially on one core. The code is a research prototype and has not been audited.
-
-## From the M4 run to the manuscript
-
-```bash
-./run_all.sh                       # writes results/ and results/paper/
-cp -r results/paper/* <manuscript-folder>/   # proba_numbers.tex, tables/, figures/
-pdflatex main_v3_4 && bibtex main_v3_4 && pdflatex main_v3_4 && pdflatex main_v3_4
-```
-
-`main_v3_4.tex` contains `\input{proba_numbers.tex}` and quotes every measured value as
-`\PN{key}`; tables are `\input` from `tables/`. A missing key prints `??key??` in bold.
-When `results_linux_x86_vm/` is present, `run_all.sh` also generates the cross-platform sentence
-of Section 7.1 (`PROBA_COMPARE`).
-
-## Environment of the runs
-
-`results_linux_x86_vm/`: Intel Xeon @ 2.80 GHz (1 vCPU), Ubuntu 24.04, Python 3.12.3,
-coincurve 21.0.0, py_arkworks_bls12381 0.5.0, web3 8.0.0, anvil 1.5.1 (Prague), solc 0.8.28
-(`--via-ir --optimize-runs 200`), kubo 0.38.1. The manuscript numbers are to be produced on the
-Apple M4 (`results/`, created by `./run_all.sh`). Full metadata is stored in every `*.json` under `env`.
