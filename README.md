@@ -1,7 +1,7 @@
 # PROBA v3.4 — benchmark and experiment suite
 
 Reference implementation, smart contracts and experiments for Section 7 of
-*PROBA: Threshold-Authorized and Privacy-Preserving Blockchain-Powered Helios*.
+*[PROBA: Threshold-Authorized and Privacy-Preserving Blockchain-Powered Helios](https://github.com/oguz-yayla/PROBA_benchmark/blob/main/PROBA-%20Threshold-Authorized%20and%20Privacy-Preserving%20Blockchain-Powered%20Helios.pdf)*.
 Everything follows the normative Algorithms 5–8 and the BLS12-381 instantiation
 of Section 3.3 of the v3.4 manuscript.
 
